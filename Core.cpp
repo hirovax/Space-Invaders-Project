@@ -14,14 +14,20 @@ SMALL_RECT RectWindow{0,0,short(screen_width + 1),short(screen_height + statisti
 
 void SetProperConsoleBufferVariables() {
 
-		SetConsoleWindowInfo(console_out, TRUE, &RectWindow);
+	if (!SetConsoleWindowInfo(console_out, TRUE, &RectWindow)) {
+		throw runtime_error("Unable to set console window size (SetConsoleWindowInfo).");
+	}
 
-		ShowScrollBar(GetConsoleWindow(), SB_BOTH, 0);
+	ShowScrollBar(GetConsoleWindow(), SB_BOTH, 0);
 
-		//disabling cursor visibility
-		GetConsoleCursorInfo(console_out, &cursorInfo);
-		cursorInfo.bVisible = false; // set the cursor visibility
-		SetConsoleCursorInfo(console_out, &cursorInfo);
+	//disabling cursor visibility
+	if (!GetConsoleCursorInfo(console_out, &cursorInfo)) {
+		throw runtime_error("Unable to get console cursor info (GetConsoleCursorInfo).");
+	}
+	cursorInfo.bVisible = false; // set the cursor visibility
+	if (!SetConsoleCursorInfo(console_out, &cursorInfo)) { 
+		throw runtime_error("Unable to set console cursor info (SetConsoleCursorInfo).");
+	}
 }
 
 void Erase_object_from_screen(COORD coordinates, int rows, int columns) {

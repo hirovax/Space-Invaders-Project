@@ -168,8 +168,11 @@ void RandomEnemyShoot() {
 	}
 	if (found) {
 		//shooting the projectile
-		projectiles.push_back(make_unique<Projectile>());
-		enemies[random_enemy_to_shoot].ShootProjectile(*projectiles.back());
+		try {
+			projectiles.push_back(make_unique<Projectile>());
+			enemies[random_enemy_to_shoot].ShootProjectile(*projectiles.back());
+		}
+		catch (const exception&) {}
 	}
 }
 

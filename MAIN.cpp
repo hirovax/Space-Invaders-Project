@@ -11,22 +11,46 @@ Player player;
 
 
 int main() {
-	//test234
-	//setting window sizek
-	console_out = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetProperConsoleBufferVariables(); // scroll to the top (in case of user scrolling down), set window size, disable cursor, disable scrollbars
+	//setting window parameters
+	try {
+		console_out = GetStdHandle(STD_OUTPUT_HANDLE);
+		if (console_out == INVALID_HANDLE_VALUE) {
+			throw runtime_error("Unable to get handle to console (GetStdHandle).");
+		}
+		SetProperConsoleBufferVariables(); // scroll to the top (in case of user scrolling down), set window size, disable cursor, disable scrollbars
 
-	// disabling resizing and maximizing
-	HWND consoleWindow = GetConsoleWindow();
-	LONG style = GetWindowLong(consoleWindow, GWL_STYLE);
-	style &= ~WS_SIZEBOX;
-	style &= ~WS_MAXIMIZEBOX;
-	style &= ~WS_MINIMIZEBOX;
-	SetWindowLong(consoleWindow, GWL_STYLE, style);
+		// disabling resizing and maximizing
+		HWND consoleWindow = GetConsoleWindow();
+		if (!consoleWindow) {
+			throw runtime_error("Unable to get handle to console window (GetConsoleWindow).");
+		}
+		LONG style = GetWindowLong(consoleWindow, GWL_STYLE);
+		if (style == 0) {
+			throw runtime_error("Unable to get style of console window (GetWindowLong).");
+		}
+		style &= ~WS_SIZEBOX;
+		style &= ~WS_MAXIMIZEBOX;
+		style &= ~WS_MINIMIZEBOX;
 
-	//enable colors
-	DWORD consoleMode;
-	if (GetConsoleMode(console_out, &consoleMode)) SetConsoleMode(console_out, consoleMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+		if (!SetWindowLong(consoleWindow, GWL_STYLE, style)) {	
+			throw runtime_error("Unable to set style of console window (SetWindowLong).");
+		}
+
+		//enable colors
+		DWORD consoleMode = 0;
+		if (!GetConsoleMode(console_out, &consoleMode)) {
+			throw runtime_error("Unable to get console mode (GetConsoleMode).");
+		}
+		if (!SetConsoleMode(console_out, consoleMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING)) {
+			throw runtime_error("Unable to set console mode (SetConsoleMode).");
+		};
+	}
+	catch (const exception& e) {
+		cerr << "Error while initializing window: " << e.what() << endl;
+		system("PAUSE");
+		return 0;
+	}
+
 
 	//reading highscore from binary file
 	ifstream saveOUT("statistics.dat", ios::binary | ios::in);
@@ -76,8 +100,14 @@ int main() {
 		//Game
 		do {
 			start_time = chrono::steady_clock::now();
-			SetProperConsoleBufferVariables(); 
-
+			try {
+				SetProperConsoleBufferVariables();
+			}
+			catch (const exception& e) {
+				cerr << "Error while initializing window: " << e.what() << endl;
+				system("PAUSE");
+				return 0;
+			}
 			displayBarrier(); // displaying barrier every frame, because projectiles can penetrate it
 
 			//enemies dying animations
@@ -113,8 +143,10 @@ int main() {
 				//player shooting
 				if (GetAsyncKeyState(VK_SPACE) && reload_time < 0) {
 					reload_time = 0.5;
-					projectiles.push_back(make_unique<Projectile>());
-					player.ShootProjectile(*projectiles.back());
+					try {
+						projectiles.push_back(make_unique<Projectile>());
+						player.ShootProjectile(*projectiles.back());
+					} catch (const exception&) {}
 				}
 
 
@@ -209,6 +241,10 @@ int main() {
 		if (Score > highscore) {
 			ofstream saveIN("statistics.dat", ios::binary | ios::out);
 			saveIN.write(reinterpret_cast<char*>(&Score), sizeof(Score));
+			if (!saveIN) {
+				SetConsoleCursorPosition(console_out, COORD{ 45,12 });
+				cout << RED << "ERROR: Unable to write highscore to file!";
+			}
 			highscore = Score;
 			SetConsoleCursorPosition(console_out, COORD{ 45,13 });
 			cout << YELLOW << "New Highscore!";
@@ -227,5 +263,4 @@ int main() {
 		
 	} while (true);
 	exit(0);
-
 }
