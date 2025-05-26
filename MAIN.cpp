@@ -11,8 +11,8 @@ Player player;
 
 
 int main() {
-	//test
-	//setting window size
+	//test234
+	//setting window sizek
 	console_out = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetProperConsoleBufferVariables(); // scroll to the top (in case of user scrolling down), set window size, disable cursor, disable scrollbars
 
