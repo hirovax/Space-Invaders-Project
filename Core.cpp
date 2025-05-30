@@ -34,7 +34,7 @@ void loadSoundFiles() {
 		|| !playerShootBuffer.loadFromFile("Sounds/shoot.wav")
 		|| !enemyShootBuffer.loadFromFile("Sounds/ufo_highpitch.wav")
 		|| !gameOverBuffer.loadFromFile("Sounds/GameOver.wav")) {
-		throw runtime_error("Failed to load sound");
+		throw runtime_error("Failed to load sound files");
 		return;
 	}
 }

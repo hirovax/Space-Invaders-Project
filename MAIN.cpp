@@ -61,12 +61,15 @@ int main() {
 
 	//reading highscore from binary file
 	ifstream saveOUT("statistics.dat", ios::binary | ios::in);
-	if (saveOUT.is_open()) {
+	if (saveOUT) {
 		saveOUT.read(reinterpret_cast<char*>(&highscore), sizeof(highscore));
 		saveOUT.close();
 	}
-	else highscore = 0;
-
+	else {
+		cerr << RED << "Statistics file not found, assuming higscore = 0" << endl;
+		Sleep(2500);
+		highscore = 0;
+	}
 	try {
 		loadSoundFiles();
 	} catch (const exception& e) {
@@ -259,13 +262,14 @@ int main() {
 		//writing highscore to binary file
 		if (Score > highscore) {
 			ofstream saveIN("statistics.dat", ios::binary | ios::out);
-			saveIN.write(reinterpret_cast<char*>(&Score), sizeof(Score));
 			if (!saveIN) {
-				SetConsoleCursorPosition(console_out, COORD{ 45,12 });
-				cout << RED << "ERROR: Unable to write highscore to file!";
+				SetConsoleCursorPosition(console_out, COORD{ 25,11 });
+				cerr << RED << "ERROR: Statistics file not found, cannot create the file!";
+				SetConsoleCursorPosition(console_out, COORD{ 31,12 });
+				cerr << RED << "Highscore can be lost after closing the game!";
+			} else {
+				saveIN.write(reinterpret_cast<char*>(&Score), sizeof(Score));
 			}
-			SetConsoleCursorPosition(console_out, COORD{ 45,12 });
-			cout << RED << "ERROR: Unable to write highscore to file!";
 			highscore = Score;
 			SetConsoleCursorPosition(console_out, COORD{ 45,13 });
 			cout << YELLOW << "New Highscore!";
