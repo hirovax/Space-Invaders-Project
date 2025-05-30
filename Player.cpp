@@ -37,6 +37,7 @@ void Player::Move(string direction) {
 }
 
 void Player::ShootProjectile(Projectile &projectile) {
+	playPlayerProjectileShootSound();
 	projectile.x = x;
 	projectile.y = y + (height/2 + 1);
 	projectile.direction = "up";
@@ -45,6 +46,7 @@ void Player::ShootProjectile(Projectile &projectile) {
 void Player::DieAnimation() {
 	switch (dieanimationFrame) {
 	case 0:
+		playPlayerDeathSound();
 		graphic[0] = "* * *";
 		graphic[1] = " * * ";
 		graphic[2] = "* * *";

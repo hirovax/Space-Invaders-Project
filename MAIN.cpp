@@ -1,6 +1,5 @@
 #include "header.h"
 
-using namespace std;
 
 Enemy enemies[10];
 int enemies_alive = 10;
@@ -8,7 +7,16 @@ int highscore;
 vector<unique_ptr<Projectile>> projectiles;
 Player player;
 
-
+void playSound() {
+	sf::SoundBuffer buffer;
+	if (!buffer.loadFromFile("killdeer.wav")) {
+		std::cout << "Failed to load sound" << std::endl;
+		return;
+	}
+	sf::Sound sound;
+	sound.setBuffer(buffer);
+	sound.play();
+}
 
 int main() {
 	//setting window parameters
@@ -44,8 +52,7 @@ int main() {
 		if (!SetConsoleMode(console_out, consoleMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING)) {
 			throw runtime_error("Unable to set console mode (SetConsoleMode).");
 		};
-	}
-	catch (const exception& e) {
+	} catch (const exception& e) {
 		cerr << "Error while initializing window: " << e.what() << endl;
 		system("PAUSE");
 		return 0;
@@ -60,7 +67,13 @@ int main() {
 	}
 	else highscore = 0;
 
-
+	try {
+		loadSoundFiles();
+	} catch (const exception& e) {
+		cerr << "Error while loading sound files: " << e.what() << endl;
+		system("PAUSE");
+		return 0;
+	}
 	bool HELLMODE = false;
 	do {
 		SetConsoleCursorPosition(console_out, COORD{ 0, 0 }); // scroll to the top
@@ -95,10 +108,16 @@ int main() {
 		double enemymove_time = 0.5;
 		double enemyreload_time = 1.0;
 		string enemiesDirection = "right";
+		int soundIndex{};
+		double MusicDelay=60;
 		displayBarrier();
 		Sleep(1000);
 		//Game
 		do {
+			if (MusicDelay <= 0) {
+				playMusic(&soundIndex);
+				MusicDelay = (1.0 / ((11 - enemies_alive) * 2.0)) *120;
+			}
 			start_time = chrono::steady_clock::now();
 			try {
 				SetProperConsoleBufferVariables();
@@ -185,7 +204,6 @@ int main() {
 
 				//enemy movement
 				if (enemymove_time < 0) {
-
 					enemiesDirection = SetEnemiesDirection(enemiesDirection);
 					enemymove_time = 1.0 / ((11 - enemies_alive) * 2.0);
 					//if enemies can move -> aren't too close to player
@@ -224,6 +242,7 @@ int main() {
 					enemymove_time -= 0.020;
 					reload_time -= 0.020;
 					enemyreload_time -= 0.020;
+					MusicDelay -= 0.020;
 				}
 			}
 			else {
@@ -231,6 +250,7 @@ int main() {
 					enemymove_time -= frame_duration;
 					reload_time -= frame_duration;
 					enemyreload_time -= frame_duration;
+					MusicDelay -= frame_duration;
 				}
 			}
 
@@ -245,6 +265,8 @@ int main() {
 				SetConsoleCursorPosition(console_out, COORD{ 45,12 });
 				cout << RED << "ERROR: Unable to write highscore to file!";
 			}
+			SetConsoleCursorPosition(console_out, COORD{ 45,12 });
+			cout << RED << "ERROR: Unable to write highscore to file!";
 			highscore = Score;
 			SetConsoleCursorPosition(console_out, COORD{ 45,13 });
 			cout << YELLOW << "New Highscore!";

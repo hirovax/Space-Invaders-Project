@@ -6,7 +6,7 @@
 #include <iomanip>
 #include <fstream>
 #include <conio.h>
-
+#include <SFML/Audio.hpp>
 //COLORS
 #define RED "\033[31m"
 #define WHITE "\033[37m"
@@ -57,6 +57,13 @@ void Display_Exit_Button();
 void Display_Codes_Button();
 void Display_Instructions_Button();
 void GameOver();
+
+void loadSoundFiles();
+void playMusic(int* index);
+void playEnemyDeathSound();
+void playPlayerDeathSound();
+void playPlayerProjectileShootSound();
+void playEnemyProjectileShootSound();
 
 bool Menu(bool* HELLMODE);
 

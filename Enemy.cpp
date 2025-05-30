@@ -45,6 +45,7 @@ void FirstDisplayOfEnemies()
 void Enemy::DieAnimation() {
 	switch (dieanimationFrame) {
 	case 0:
+		playEnemyDeathSound();
 		graphic[0] = "- - -";
 		graphic[1] = " - - ";
 		graphic[2] = "- - -";
@@ -177,6 +178,7 @@ void RandomEnemyShoot() {
 }
 
 void Enemy::ShootProjectile(Projectile& projectile) {
+	playEnemyProjectileShootSound();
 	projectile.x = x;
 	projectile.y = y - (height/2 + 1);
 	projectile.direction = "down";

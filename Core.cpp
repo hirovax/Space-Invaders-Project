@@ -11,6 +11,52 @@ HANDLE console_in;
 CONSOLE_CURSOR_INFO cursorInfo;
 CONSOLE_SCREEN_BUFFER_INFO ConsoleBufferInfo;
 SMALL_RECT RectWindow{0,0,short(screen_width + 1),short(screen_height + statistics_height + 1) }; // Left = 0, Top = 0, Right = screen_width + 1, Bottom =screen_height + statistics_height + 1 
+sf::SoundBuffer musicBuffer[4];
+sf::Sound musicSound;
+sf::SoundBuffer invaderKilledBuffer;
+sf::Sound invaderKilledSound;
+sf::SoundBuffer explosionBuffer;
+sf::Sound explosionSound;
+sf::SoundBuffer playerShootBuffer;
+sf::Sound playerShootSound;
+sf::SoundBuffer enemyShootBuffer;
+sf::Sound enemyShootSound;
+
+void loadSoundFiles() {
+	if (!musicBuffer[0].loadFromFile("Sounds/fastinvader1.wav")
+		|| !musicBuffer[1].loadFromFile("Sounds/fastinvader2.wav")
+		|| !musicBuffer[2].loadFromFile("Sounds/fastinvader3.wav")
+		|| !musicBuffer[3].loadFromFile("Sounds/fastinvader4.wav")
+		|| !invaderKilledBuffer.loadFromFile("Sounds/invaderkilled.wav")
+		|| !explosionBuffer.loadFromFile("Sounds/explosion.wav")
+		|| !playerShootBuffer.loadFromFile("Sounds/shoot.wav")
+		|| !enemyShootBuffer.loadFromFile("Sounds/ufo_highpitch.wav")) {
+		throw runtime_error("Failed to load sound");
+		return;
+	}
+}
+void playEnemyDeathSound() {
+	invaderKilledSound.setBuffer(invaderKilledBuffer);
+	invaderKilledSound.play();
+}
+void playPlayerDeathSound() {
+	explosionSound.setBuffer(explosionBuffer);
+	explosionSound.play();
+}
+void playPlayerProjectileShootSound() {
+	playerShootSound.setBuffer(playerShootBuffer);
+	playerShootSound.play();
+}
+void playEnemyProjectileShootSound() {
+	enemyShootSound.setBuffer(enemyShootBuffer);
+	enemyShootSound.play();
+}
+
+void playMusic(int* index) {
+	musicSound.setBuffer(musicBuffer[*index]);
+	musicSound.play();
+	*index = (*index+1) % 4;
+}
 
 void SetProperConsoleBufferVariables() {
 
