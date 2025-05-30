@@ -109,14 +109,14 @@ int main() {
 		double enemyreload_time = 1.0;
 		string enemiesDirection = "right";
 		int soundIndex{};
-		double MusicDelay=60;
+		double MusicDelay{};
 		displayBarrier();
 		Sleep(1000);
 		//Game
 		do {
 			if (MusicDelay <= 0) {
 				playMusic(&soundIndex);
-				MusicDelay = (1.0 / ((11 - enemies_alive) * 2.0)) *120;
+				MusicDelay = 1.0 / (11 - enemies_alive);
 			}
 			start_time = chrono::steady_clock::now();
 			try {
@@ -253,7 +253,6 @@ int main() {
 					MusicDelay -= frame_duration;
 				}
 			}
-
 
 		} while (player.HP > 0);
 		GameOver();

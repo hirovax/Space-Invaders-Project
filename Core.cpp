@@ -21,6 +21,8 @@ sf::SoundBuffer playerShootBuffer;
 sf::Sound playerShootSound;
 sf::SoundBuffer enemyShootBuffer;
 sf::Sound enemyShootSound;
+sf::SoundBuffer gameOverBuffer;
+sf::Sound gameOverSound;
 
 void loadSoundFiles() {
 	if (!musicBuffer[0].loadFromFile("Sounds/fastinvader1.wav")
@@ -30,7 +32,8 @@ void loadSoundFiles() {
 		|| !invaderKilledBuffer.loadFromFile("Sounds/invaderkilled.wav")
 		|| !explosionBuffer.loadFromFile("Sounds/explosion.wav")
 		|| !playerShootBuffer.loadFromFile("Sounds/shoot.wav")
-		|| !enemyShootBuffer.loadFromFile("Sounds/ufo_highpitch.wav")) {
+		|| !enemyShootBuffer.loadFromFile("Sounds/ufo_highpitch.wav")
+		|| !gameOverBuffer.loadFromFile("Sounds/GameOver.wav")) {
 		throw runtime_error("Failed to load sound");
 		return;
 	}
@@ -50,6 +53,10 @@ void playPlayerProjectileShootSound() {
 void playEnemyProjectileShootSound() {
 	enemyShootSound.setBuffer(enemyShootBuffer);
 	enemyShootSound.play();
+}
+void playGameOverSound() {
+	gameOverSound.setBuffer(gameOverBuffer);
+	gameOverSound.play();
 }
 
 void playMusic(int* index) {
@@ -499,6 +506,7 @@ void Display_Instructions_Button() {
 }
 
 void GameOver() {
+	playGameOverSound();
 	COORD coordinates;
 	coordinates.X = 47;
 	coordinates.Y = 13;
