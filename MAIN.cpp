@@ -1,22 +1,11 @@
 #include "header.h"
 
-
 Enemy enemies[10];
 int enemies_alive = 10;
 int highscore;
 vector<unique_ptr<Projectile>> projectiles;
 Player player;
 
-void playSound() {
-	sf::SoundBuffer buffer;
-	if (!buffer.loadFromFile("killdeer.wav")) {
-		std::cout << "Failed to load sound" << std::endl;
-		return;
-	}
-	sf::Sound sound;
-	sound.setBuffer(buffer);
-	sound.play();
-}
 
 int main() {
 	//setting window parameters
