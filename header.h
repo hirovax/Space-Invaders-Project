@@ -42,6 +42,7 @@ extern CONSOLE_CURSOR_INFO cursorInfo;
 extern CONSOLE_SCREEN_BUFFER_INFO ConsoleBufferInfo;
 extern SMALL_RECT RectWindow;
 
+extern int Volume;
 
 //Core
 void Update_object_pos_on_screen(int x1, int y1, int x2, int y2, string graphic[], int rows, int columns);

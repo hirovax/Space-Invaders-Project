@@ -5,7 +5,7 @@ int enemies_alive = 10;
 int highscore;
 vector<unique_ptr<Projectile>> projectiles;
 Player player;
-
+int Volume = 50;
 
 int main() {
 	//setting window parameters

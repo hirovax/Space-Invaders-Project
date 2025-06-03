@@ -40,27 +40,33 @@ void loadSoundFiles() {
 }
 void playEnemyDeathSound() {
 	invaderKilledSound.setBuffer(invaderKilledBuffer);
+	invaderKilledSound.setVolume(Volume);
 	invaderKilledSound.play();
 }
 void playPlayerDeathSound() {
 	explosionSound.setBuffer(explosionBuffer);
+	explosionSound.setVolume(Volume);
 	explosionSound.play();
 }
 void playPlayerProjectileShootSound() {
 	playerShootSound.setBuffer(playerShootBuffer);
+	playerShootSound.setVolume(Volume);
 	playerShootSound.play();
 }
 void playEnemyProjectileShootSound() {
 	enemyShootSound.setBuffer(enemyShootBuffer);
+	enemyShootSound.setVolume(Volume);
 	enemyShootSound.play();
 }
 void playGameOverSound() {
 	gameOverSound.setBuffer(gameOverBuffer);
+	gameOverSound.setVolume(Volume);
 	gameOverSound.play();
 }
 
 void playMusic(int* index) {
 	musicSound.setBuffer(musicBuffer[*index]);
+	musicSound.setVolume(Volume);
 	musicSound.play();
 	*index = (*index+1) % 4;
 }
