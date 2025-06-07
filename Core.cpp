@@ -243,7 +243,9 @@ bool Menu(bool* HELLMODE) {
 	cout << YELLOW << "'Space Invaders' project" << WHITE;
 	SetConsoleCursorPosition(console_out, COORD{ 25, 27 });
 	cout << "To navigate in the menu, use " << GREEN << "Up" << WHITE << " and " << GREEN << "Down" << WHITE << " arrow keys.";
-	SetConsoleCursorPosition(console_out, COORD{ 31, 28 });
+	SetConsoleCursorPosition(console_out, COORD{ 16, 28 });
+	cout << "To change volume, navigate to Volume and use " << GREEN << "Right" << WHITE << " and " << GREEN << "Left" << WHITE << " arrow keys.";
+	SetConsoleCursorPosition(console_out, COORD{ 31, 29 });
 	cout << "To confirm your selection, press " << GREEN << "Enter" << WHITE << ".";
 	if (*HELLMODE) {
 		SetConsoleCursorPosition(console_out, COORD{ 29, 30 });
@@ -252,12 +254,13 @@ bool Menu(bool* HELLMODE) {
 	cout << GREEN;
 	Display_Start_Button(HELLMODE);
 	cout << WHITE;
+	Display_Volume_Setting();
 	SetConsoleCursorPosition(console_out, COORD{ 43, 14 });
 	cout << BRBLUE << Arrow << WHITE;
 	Display_Exit_Button();
 	Display_Instructions_Button();
 	Display_Codes_Button();
-	int MenuPointer = 0;
+	int MenuPointer = 1;
 	int _input{};
 	if (_kbhit()) {
 		_input = _getch(); // resetting previous input
@@ -273,59 +276,83 @@ bool Menu(bool* HELLMODE) {
 				switch (MenuPointer) {
 				case 0:
 					cout << WHITE;
+					Display_Volume_Setting();
+					SetConsoleCursorPosition(console_out, COORD{ 48, 9 });
+					cout << " ";
+					break;
+				case 1:
+					cout << WHITE;
 					Display_Start_Button(HELLMODE);
 					SetConsoleCursorPosition(console_out, COORD{ 43, 14 });
 					cout << " ";
 					break;
-				case 1:
+				case 2:
 					cout << WHITE;
 					Display_Instructions_Button();
 					SetConsoleCursorPosition(console_out, COORD{ 43, 17 });
 					cout << " ";
 					break;
-				case 2:
+				case 3:
 					cout << WHITE;
 					Display_Codes_Button();
 					SetConsoleCursorPosition(console_out, COORD{ 43, 20 });
 					cout << " ";
 					break;
-				case 3:
+				case 4:
 					cout << WHITE;
 					Display_Exit_Button();
 					SetConsoleCursorPosition(console_out, COORD{ 43, 23 });
 					cout << " ";
 					break;
 				}
-				//checking if input is arrow up or down
+				//checking if input is arrow up or down or left or right
 				switch (_getch()) {
 				case KEY_DOWN:
-					if (MenuPointer < 3) MenuPointer++;
+					MenuPointer = (MenuPointer + 1) % 5;
 					break;
 				case KEY_UP:
-					if (MenuPointer > 0) MenuPointer--;
+					MenuPointer = (MenuPointer - 1 + 5) % 5;
+					break;
+				case KEY_RIGHT:
+					if (MenuPointer == 0 && Volume < 100) {
+						Volume += 5;
+						playPlayerProjectileShootSound();
+					}
+					break;
+				case KEY_LEFT:
+					if (MenuPointer == 0 && Volume > 0) {
+						Volume -= 5;
+						playPlayerProjectileShootSound();
+					}
 					break;
 				}
 				//setting correct color and displaying arrow
 				switch (MenuPointer) {
 				case 0:
 					cout << GREEN;
+					Display_Volume_Setting();
+					SetConsoleCursorPosition(console_out, COORD{ 48, 9 });
+					cout << BRBLUE << Arrow << WHITE;
+					break;
+				case 1:
+					cout << GREEN;
 					Display_Start_Button(HELLMODE);
 					SetConsoleCursorPosition(console_out, COORD{ 43, 14 });
 					cout << BRBLUE << Arrow << WHITE;
 					break;
-				case 1:
+				case 2:
 					cout << GREEN;
 					Display_Instructions_Button();
 					SetConsoleCursorPosition(console_out, COORD{ 43, 17 });
 					cout << BRBLUE << Arrow << WHITE;
 					break;
-				case 2:
+				case 3:
 					cout << GREEN;
 					Display_Codes_Button();
 					SetConsoleCursorPosition(console_out, COORD{ 43, 20 });
 					cout << BRBLUE << Arrow << WHITE;
 					break;
-				case 3:
+				case 4:
 					cout << GREEN;
 					Display_Exit_Button();
 					SetConsoleCursorPosition(console_out, COORD{ 43, 23 });
@@ -334,16 +361,16 @@ bool Menu(bool* HELLMODE) {
 				}
 			}
 		}
-	} while (_input!= '\r');
+	} while (_input!= '\r'||MenuPointer==0);
 	cout << WHITE;
-	Erase_object_from_screen(COORD{ 43,13 }, 12, 17); // erase buttons
-	Erase_object_from_screen(COORD{ 25,27 }, 2, 52); // erase menu instructions
+	Erase_object_from_screen(COORD{ 42,9 }, 17, 20); // erase buttons
+	Erase_object_from_screen(COORD{ 16,27 }, 3, 71); // erase menu instructions
 	if (*HELLMODE) Erase_object_from_screen(COORD{ 29,30 }, 1, 43); // erase HELLMODE instructions
 	SetConsoleCursorPosition(console_out, COORD{ 39, 5 });
 	cout << "                        "; // remove title text
 
-	if (MenuPointer == 0) return true; // start game button
-	if (MenuPointer == 1) { // instructions button
+	if (MenuPointer == 1) return true; // start game button
+	if (MenuPointer == 2) { // instructions button
 		SetConsoleCursorPosition(console_out, COORD{ 45, 5 });
 		cout << "Instructions";
 		SetConsoleCursorPosition(console_out, COORD{ 18, 10 });
@@ -365,7 +392,7 @@ bool Menu(bool* HELLMODE) {
 		} while (true);
 		Erase_object_from_screen(COORD{ 18,10 }, 6, 68); // erase the instructions
 	}
-	if (MenuPointer == 2) { //codes button
+	if (MenuPointer == 3) { //codes button
 		SetConsoleCursorPosition(console_out, COORD{ 48, 5 });
 		cout << "CODES";
 		SetConsoleCursorPosition(console_out, COORD{ 12, 7 });
@@ -430,10 +457,25 @@ bool Menu(bool* HELLMODE) {
 		Erase_object_from_screen(COORD{ 12,7 }, 3, 80); // erasing instructions 
 		return false;
 	}
-	if (MenuPointer == 3) { // exit button
+	if (MenuPointer == 4) { // exit button
 		exit(0);
 	}
 	return false;
+}
+
+void Display_Volume_Setting() {
+	COORD coordinates;
+	coordinates.X = 49;
+	coordinates.Y = 9;
+	SetConsoleCursorPosition(console_out, coordinates);
+	cout << "Volume";
+	coordinates.X = 42;
+	coordinates.Y = 10;
+	SetConsoleCursorPosition(console_out, coordinates);
+	cout << GREEN;
+	cout<<string(Volume / 5, VolumeBlock);
+	cout << WHITE;
+	cout << string(20 - Volume / 5, VolumeBlock);
 }
 
 void Display_Start_Button(bool* HELLMODE) {

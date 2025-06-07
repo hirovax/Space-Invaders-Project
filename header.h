@@ -24,9 +24,12 @@
 #define RightDownCorner (char)0xBC
 #define LeftDownCorner (char)0xC8	
 #define Arrow (char)0xAF
+#define VolumeBlock (char)0xDB
 //KEYS
 #define KEY_DOWN 80
 #define KEY_UP 72
+#define KEY_RIGHT 77
+#define KEY_LEFT 75
 
 using namespace std;
 extern int enemies_alive;
@@ -54,6 +57,7 @@ void ChangeScoreOnScreen();
 void ChangeHPOnScreen();
 void displayBarrier();
 void DisplayHighscore(int highscore);
+void Display_Volume_Setting();
 void Display_Start_Button(bool* HELLMODE);
 void Display_Exit_Button();
 void Display_Codes_Button();
