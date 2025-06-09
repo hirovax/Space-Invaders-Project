@@ -5,7 +5,7 @@ int enemies_alive = 10;
 int highscore;
 vector<unique_ptr<Projectile>> projectiles;
 Player player;
-int Volume = 50;
+float Volume = 50;
 
 int main() {
 	//setting window parameters
@@ -82,11 +82,9 @@ int main() {
 		srand(unsigned int(time(NULL)));
 		Score = 0;
 		enemies_alive = 10;
-		if (HELLMODE) player.HP = 1;
-		else player.HP = 3;
-		player.graphic[0] = "  *  ";
-		player.graphic[1] = "*****";
-		player.graphic[2] = "*****";
+		if (HELLMODE) player.setHp(1);
+		else player.setHp(3);
+		player.setGraphic("  *  ", "*****", "*****");
 
 		//displaying stats
 		ChangeScoreOnScreen();
@@ -123,14 +121,14 @@ int main() {
 
 			//enemies dying animations
 			for (int i = 0; i < 10; i++) {
-				if (enemies[i].dying) {
+				if (enemies[i].isDying()) {
 					enemies[i].DieAnimation();
-					if (!enemies[i].dying) {
+					if (!enemies[i].isDying()) {
 						enemies_alive--;
 					}
 				}
 			}
-			if (!player.dying) {
+			if (!player.isDying()) {
 				if (enemies_alive <= 0) {
 					//next round
 					enemies_alive = 10;
@@ -165,12 +163,12 @@ int main() {
 				//projectiles
 				for (int i = 0; i < projectiles.size(); i++) {
 					//check if collision occurs if not animated death
-					if (!projectiles[i]->dying && projectiles[i]->CheckCollision(i)) {
+					if (!projectiles[i]->isDying() && projectiles[i]->CheckCollision(i)) {
 						//delete if not animated death // double checking of (bool dying), because CheckCollision can change its state
-						if (!projectiles[i]->dying) {
+						if (!projectiles[i]->isDying()) {
 							COORD temp;
-							temp.X = projectiles[i]->x + 1;
-							temp.Y = screen_height - projectiles[i]->y;
+							temp.X = projectiles[i]->getX() + 1;
+							temp.Y = screen_height - projectiles[i]->getY();
 							Erase_object_from_screen(temp, 1, 1);
 							projectiles.erase(projectiles.begin() + i);
 							i--;// why? because if it wasn't i--, then the next projectile would be skipped on checking the collisions.
@@ -179,14 +177,14 @@ int main() {
 				}
 				//projectiles movement and animations
 				for (int i = 0; i < projectiles.size(); i++) {
-					if (!projectiles[i]->dying) {
+					if (!projectiles[i]->isDying()) {
 						projectiles[i]->Move();
 					}
 					else {
 						//projectile dying animation
 						projectiles[i]->DieAnimation();
 						//delete if animation ended
-						if (!projectiles[i]->dying) {
+						if (!projectiles[i]->isDying()) {
 							projectiles.erase(projectiles.begin() + i);
 							i--; //the same as in the collisions
 						}
@@ -205,12 +203,12 @@ int main() {
 				}
 				//player movement
 				if (GetAsyncKeyState(VK_LEFT)) {
-					if (player.x - 3 >= 0) {
+					if (player.getX() - 3 >= 0) {
 						player.Move("left");
 					}
 				}
 				if (GetAsyncKeyState(VK_RIGHT)) {
-					if (player.x + 3 < screen_width) {
+					if (player.getX() + 3 < screen_width) {
 						player.Move("right");
 					}
 				}
@@ -230,7 +228,7 @@ int main() {
 			frame_duration = chrono::duration_cast<chrono::duration<double>>(end_time - start_time).count();
 			if (frame_duration < 0.016) {
 				Sleep(int(16.0 - frame_duration * 1000));
-				if (!player.dying) {
+				if (!player.isDying()) {
 					enemymove_time -= 0.020;
 					reload_time -= 0.020;
 					enemyreload_time -= 0.020;
@@ -238,7 +236,7 @@ int main() {
 				}
 			}
 			else {
-				if (!player.dying) {
+				if (!player.isDying()) {
 					enemymove_time -= frame_duration;
 					reload_time -= frame_duration;
 					enemyreload_time -= frame_duration;
@@ -246,7 +244,7 @@ int main() {
 				}
 			}
 
-		} while (player.HP > 0);
+		} while (player.getHp() > 0);
 		GameOver();
 		//writing highscore to binary file
 		if (Score > highscore) {

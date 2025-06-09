@@ -45,7 +45,7 @@ extern CONSOLE_CURSOR_INFO cursorInfo;
 extern CONSOLE_SCREEN_BUFFER_INFO ConsoleBufferInfo;
 extern SMALL_RECT RectWindow;
 
-extern int Volume;
+extern float Volume;
 
 //Core
 void Update_object_pos_on_screen(int x1, int y1, int x2, int y2, string graphic[], int rows, int columns);
@@ -81,6 +81,10 @@ public:
 	void Move();
 	bool CheckCollision(int index);
 	void DieAnimation();
+	bool isDying() const { return dying; }
+	int getX() const { return x; }
+	int getY() const { return y; }
+private:
 	bool dying = false;
 	int dieanimationFrame = 0;
 	int x=0;
@@ -89,6 +93,8 @@ public:
 	const int width = 1;
 	const int height = 1;
 	string graphic = "|";
+	friend class Player;
+	friend class Enemy;
 };
 extern vector<unique_ptr<Projectile>> projectiles;
 
@@ -100,6 +106,17 @@ public:
 	void Move(string direction);
 	void ShootProjectile(Projectile &projectile);
 	void DieAnimation();
+	void setGraphic(const string line1, const string line2, const string line3) { graphic[0] = line1; graphic[1] = line2; graphic[2] = line3; }
+	void setHp(int hp) { HP = hp; }
+	int getHp() const { return HP; }
+	bool isDying() const { return dying; }
+	int getX() const { return x; }
+	int getY() const { return y; }
+	void setX(int X) { x = X; }
+	void setY(int Y) { y = Y; }
+	int getWidth() const { return width; }
+	int getHeight() const { return height; }
+private:
 	int dieanimationFrame = 0;
 	bool dying = false;
 	int HP = 3;
@@ -108,6 +125,7 @@ public:
 	const int width = 5;
 	const int height = 3;
 	string graphic[3] = {};
+	friend class Projectile;
 };
 extern Player player;
 
@@ -117,8 +135,16 @@ class Enemy {
 public:
 	Enemy();
 	void DieAnimation();
-	int dieanimationFrame = 0;
 	void ShootProjectile(Projectile& projectile);
+	bool isDying() const { return dying; }
+	bool isDead() const { return isdead; }
+	void setGraphic(const string line1, const string line2, const string line3) { graphic[0] = line1; graphic[1] = line2; graphic[2] = line3; }
+	void setIsDead(bool ISDEAD) { isdead = ISDEAD; }
+	int getX() const { return x; }
+	int getY() const { return y; }
+	string getGraphicLine(int index) const { return graphic[index]; }
+private:
+	int dieanimationFrame = 0;
 	bool dying = false;
 	bool isdead = false;
 	int x = 0;
@@ -127,6 +153,10 @@ public:
 	const int height = 3;
 	string graphic[3] = {};
 
+
+	friend class Projectile;
+	friend void SetEnemiesFirstPosition();
+	friend bool MoveEnemies(string direction);
 	
 };
 void SetEnemiesFirstPosition();

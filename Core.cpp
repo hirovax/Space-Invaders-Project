@@ -40,33 +40,33 @@ void loadSoundFiles() {
 }
 void playEnemyDeathSound() {
 	invaderKilledSound.setBuffer(invaderKilledBuffer);
-	invaderKilledSound.setVolume(Volume);
+	invaderKilledSound.setVolume(Volume/2);
 	invaderKilledSound.play();
 }
 void playPlayerDeathSound() {
 	explosionSound.setBuffer(explosionBuffer);
-	explosionSound.setVolume(Volume);
+	explosionSound.setVolume(Volume/2);
 	explosionSound.play();
 }
 void playPlayerProjectileShootSound() {
 	playerShootSound.setBuffer(playerShootBuffer);
-	playerShootSound.setVolume(Volume);
+	playerShootSound.setVolume(Volume/2);
 	playerShootSound.play();
 }
 void playEnemyProjectileShootSound() {
 	enemyShootSound.setBuffer(enemyShootBuffer);
-	enemyShootSound.setVolume(Volume);
+	enemyShootSound.setVolume(Volume/2);
 	enemyShootSound.play();
 }
 void playGameOverSound() {
 	gameOverSound.setBuffer(gameOverBuffer);
-	gameOverSound.setVolume(Volume);
+	gameOverSound.setVolume(Volume/2);
 	gameOverSound.play();
 }
 
 void playMusic(int* index) {
 	musicSound.setBuffer(musicBuffer[*index]);
-	musicSound.setVolume(Volume);
+	musicSound.setVolume(Volume*2);
 	musicSound.play();
 	*index = (*index+1) % 4;
 }
@@ -149,29 +149,27 @@ void Display_Borders() {
 void NewRound() {
 	//erasing the player
 	COORD temp;
-	temp.X = (player.x + 1) - (player.width / 2);
-	temp.Y = screen_height - player.y - (player.height / 2);
-	Erase_object_from_screen(temp, player.height, player.width);
+	temp.X = (player.getX() + 1) - (player.getWidth() / 2);
+	temp.Y = screen_height - player.getY() - (player.getHeight() / 2);
+	Erase_object_from_screen(temp, player.getHeight(), player.getWidth());
 	//erasing existing projectiles
 	for (int i = 0; i < projectiles.size(); i++) {
 		COORD temp;
-		temp.X = projectiles[i]->x + 1;
-		temp.Y = screen_height - projectiles[i]->y;
+		temp.X = projectiles[i]->getX() + 1;
+		temp.Y = screen_height - projectiles[i]->getY();
 		Erase_object_from_screen(temp, 1, 1);
 		projectiles.erase(projectiles.begin() + i);
 		i--;
 	}
 	//setting variables for next round 
 	for (int i = 0; i < 10; i++) {
-		enemies[i].graphic[0] = " *** ";
-		enemies[i].graphic[1] = "*****";
-		enemies[i].graphic[2] = "*   *";
-		enemies[i].isdead = false;
+		enemies[i].setGraphic(" *** ", "*****", "*   *");
+		enemies[i].setIsDead(false);
 	}
 	SetEnemiesFirstPosition();
 	FirstDisplayOfEnemies();
-	player.x = 50;
-	player.y = 3;
+	player.setX(50);
+	player.setY(3);
 	player.FirstDisplay();
 }
 
@@ -189,12 +187,12 @@ void ChangeHPOnScreen() {
 	coordinates.X = 4;
 	coordinates.Y = screen_height + 2 + statistics_height / 2;
 	SetConsoleCursorPosition(console_out, coordinates);
-	cout <<"HP: " << player.HP;
+	cout <<"HP: " << player.getHp();
 	coordinates.X = 11;
 	cout << GREEN;
 	for (int i = 1; i < 3; i++) {
 		coordinates.Y = screen_height + 2 + statistics_height / 2 - 1;
-		if (i <= player.HP-1) {
+		if (i <= player.getHp() -1) {
 			SetConsoleCursorPosition(console_out, coordinates);
 			cout << "  *  ";
 			coordinates.Y++;
@@ -206,13 +204,13 @@ void ChangeHPOnScreen() {
 			coordinates.Y++;
 		}
 		else {
-			for (int i = 0; i < player.height; i++) {
+			for (int i = 0; i < player.getHeight(); i++) {
 				SetConsoleCursorPosition(console_out, coordinates);
 				cout << "     ";
 				coordinates.Y++;
 			}
 		}
-		coordinates.X += player.width + 2;
+		coordinates.X += player.getWidth() + 2;
 	}
 	cout << WHITE;
 
@@ -473,9 +471,9 @@ void Display_Volume_Setting() {
 	coordinates.Y = 10;
 	SetConsoleCursorPosition(console_out, coordinates);
 	cout << GREEN;
-	cout<<string(Volume / 5, VolumeBlock);
+	cout<<string(static_cast<int>(Volume) / 5, VolumeBlock);
 	cout << WHITE;
-	cout << string(20 - Volume / 5, VolumeBlock);
+	cout << string(20 - static_cast<int>(Volume) / 5, VolumeBlock);
 }
 
 void Display_Start_Button(bool* HELLMODE) {

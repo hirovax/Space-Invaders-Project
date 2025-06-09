@@ -30,11 +30,11 @@ void FirstDisplayOfEnemies()
 			Sleep(100); //visualisation effect
 			SetConsoleWindowInfo(console_out, TRUE, &RectWindow); // disable scroll
 			//left up corner of enemy
-			temp.Y = (screen_height - enemies[i * 5 + i2].y) - 1; // extreme up y
-			temp.X = (enemies[i * 5 + i2].x - 2) + 1; // extreme left x
+			temp.Y = (screen_height - enemies[i * 5 + i2].getY()) - 1; // extreme up y
+			temp.X = (enemies[i * 5 + i2].getX() - 2) + 1; // extreme left x
 			for (int i3 = 0; i3 < 3; i3++) {
 				SetConsoleCursorPosition(console_out, temp);
-				cout << enemies[i * 5 + i2].graphic[i3];
+				cout << enemies[i * 5 + i2].getGraphicLine(i3);
 				temp.Y++;
 			}
 		}
@@ -75,8 +75,8 @@ string predirection;
 string SetEnemiesDirection(string direction) {
 	if (direction == "right") {
 		for (int i = 4; i >= 0; i--) {
-			if (!enemies[i+5].isdead || !enemies[i].isdead) {
-				if (enemies[i].x + 1 + 2 >= screen_width) {
+			if (!enemies[i+5].isDead() || !enemies[i].isDead()) {
+				if (enemies[i].getX() + 1 + 2 >= screen_width) {
 					predirection = "right";
 					return "down";
 				}
@@ -85,8 +85,8 @@ string SetEnemiesDirection(string direction) {
 	}
 	if (direction == "left") {
 		for (int i = 0; i <= 4; i++) {
-			if (!enemies[i].isdead || !enemies[i + 5].isdead) {
-				if (enemies[i].x -1 -2 <= -1) {
+			if (!enemies[i].isDead() || !enemies[i + 5].isDead()) {
+				if (enemies[i].getX() - 1 - 2 <= -1) {
 					predirection = "left";
 					return "down";
 				}
@@ -137,13 +137,13 @@ void RandomEnemyShoot() {
 			break;
 		}
 		random_enemy_to_shoot = rand() % 5; //randomising column
-		if (!enemies[random_enemy_to_shoot + 5].isdead && !enemies[random_enemy_to_shoot + 5].dying) {   // checking if enemy in second row in randomized column is alive
+		if (!enemies[random_enemy_to_shoot + 5].isDead() && !enemies[random_enemy_to_shoot + 5].isDying()) {   // checking if enemy in second row in randomized column is alive
 			random_enemy_to_shoot += 5;
 			found = true;
 			break;
 		}
 		else {
-			if (!enemies[random_enemy_to_shoot].isdead && !enemies[random_enemy_to_shoot].dying && !enemies[random_enemy_to_shoot + 5].dying) {  // checking if enemy in first row in randomized column is alive and enemy in second row is not dying
+			if (!enemies[random_enemy_to_shoot].isDead() && !enemies[random_enemy_to_shoot].isDying() && !enemies[random_enemy_to_shoot + 5].isDying()) {  // checking if enemy in first row in randomized column is alive and enemy in second row is not dying
 				found = true;
 				break;
 			}
@@ -153,13 +153,13 @@ void RandomEnemyShoot() {
 	}
 	if (random_limit == 0) {
 		for (int i = 0; i < 5; i++) {
-			if (!enemies[i + 5].isdead && !enemies[i + 5].dying) {
+			if (!enemies[i + 5].isDead() && !enemies[i + 5].isDying()) {
 				random_enemy_to_shoot = i + 5;
 				found = true;
 				break;
 			}
 			else {
-				if (!enemies[i].isdead && !enemies[i].dying && !enemies[i+5].dying) {
+				if (!enemies[i].isDead() && !enemies[i].isDying() && !enemies[i + 5].isDying()) {
 					random_enemy_to_shoot = i;
 					found = true;
 					break;
